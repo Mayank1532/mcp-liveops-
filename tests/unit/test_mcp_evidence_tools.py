@@ -1,140 +1,135 @@
-from __future__ import annotations
+"""Integration tests for the MCP-LIVEOPS server."""
+
+import json
 
 import pytest
+from mcp.server import MCPServer
 
-from mcp_liveops.mcp import (
-    McpClientAdapter,
-    McpEvidenceTools,
-    create_integrated_server,
+from mcp_liveops.acquisition.coingecko import CoinPrice
+from mcp_liveops.mcp import McpClientAdapter
+from mcp_liveops.mcp.coingecko_tools import (
+    McpCoinGeckoTools,
+    register_coingecko_tools,
 )
 
 
-def test_web_evidence_tool_uses_acquisition_layer() -> None:
-    service = McpEvidenceTools()
+class FakeCoinGeckoClient:
+    """Deterministic provider for MCP integration tests."""
 
-    result = service.web_source(
-        title="Example article",
-        content="Important evidence content.",
-        source_name="Example News",
-        source_uri="https://example.com/article",
+    def get_prices(
+        self,
+        *,
+        coin_ids: list[str],
+        currency: str = "usd",
+        include_24h_change: bool = True,
+        include_last_updated_at: bool = True,
+    ) -> list[CoinPrice]:
+        """Return deterministic cryptocurrency data."""
+
+        return [
+            CoinPrice(
+                coin_id=coin_id,
+                currency=currency,
+                price=100.0 + index,
+                change_24h_percent=1.5,
+                last_updated_at=1755000000,
+            )
+            for index, coin_id in enumerate(coin_ids)
+        ]
+
+
+def create_test_server() -> MCPServer:
+    """Create an integrated MCP server with a fake provider."""
+
+    server = MCPServer(
+        "mcp-liveops-test",
+        version="0.1.0",
     )
 
-    assert result.success is True
-    assert result.output == "Important evidence content."
-    assert result.error is None
-
-
-def test_external_api_tool_uses_acquisition_layer() -> None:
-    service = McpEvidenceTools()
-
-    result = service.external_api(
-        provider="NewsAPI",
-        title="Example news",
-        content="External evidence content.",
-        source_name="Example News",
-        endpoint="https://example.com/v1/articles",
+    service = McpCoinGeckoTools(
+        FakeCoinGeckoClient(),
     )
 
-    assert result.success is True
-    assert result.output == "External evidence content."
-    assert result.error is None
-
-
-def test_web_evidence_rejects_invalid_source() -> None:
-    service = McpEvidenceTools()
-
-    result = service.web_source(
-        title="",
-        content="Content",
-        source_name="Example",
-        source_uri="https://example.com",
+    register_coingecko_tools(
+        server,
+        service,
     )
 
-    assert result.success is False
-    assert result.error is not None
+    return server
 
 
 @pytest.mark.anyio
-async def test_integrated_mcp_discovers_evidence_tools() -> None:
+async def test_integrated_mcp_discovers_crypto_tool() -> None:
+    """The integrated server should expose the crypto tool."""
+
     client = McpClientAdapter()
 
     tools = await client.discover_tools(
-        create_integrated_server(),
+        create_test_server(),
     )
 
-    assert tools == [
-        "external_api_evidence",
-        "live_weather",
-        "web_evidence",
-    ]
+    assert tools == ["get_crypto_prices"]
 
 
 @pytest.mark.anyio
-async def test_integrated_mcp_invokes_web_evidence() -> None:
+async def test_integrated_mcp_invokes_crypto_tool() -> None:
+    """The integrated server should invoke the crypto tool."""
+
     client = McpClientAdapter()
 
     result = await client.invoke(
-        create_integrated_server(),
-        "web_evidence",
+        create_test_server(),
+        "get_crypto_prices",
         {
-            "title": "Example",
-            "content": "Normalized web evidence.",
-            "source_name": "Example News",
-            "source_uri": "https://example.com/article",
+            "coin_ids": ["bitcoin", "ethereum"],
+            "currency": "usd",
         },
     )
 
     assert result.success is True
-    assert result.output == "Normalized web evidence."
+    assert result.error is None
+
+    payload = json.loads(result.output)
+
+    assert len(payload["prices"]) == 2
+    assert payload["prices"][0]["coin_id"] == "bitcoin"
+    assert payload["prices"][0]["price"] == 100.0
+    assert payload["prices"][1]["coin_id"] == "ethereum"
+    assert payload["prices"][1]["price"] == 101.0
 
 
 @pytest.mark.anyio
-async def test_integrated_mcp_invokes_external_api_evidence() -> None:
+async def test_integrated_mcp_rejects_unknown_tool() -> None:
+    """The client should normalize unknown-tool failures."""
+
     client = McpClientAdapter()
 
     result = await client.invoke(
-        create_integrated_server(),
-        "external_api_evidence",
-        {
-            "provider": "NewsAPI",
-            "title": "Example",
-            "content": "Normalized API evidence.",
-            "source_name": "Example News",
-            "endpoint": "https://example.com/v1/articles",
-        },
+        create_test_server(),
+        "unknown_tool",
+        {},
     )
 
-    assert result.success is True
-    assert result.output == "Normalized API evidence."
+    assert result.success is False
+    assert result.output == ""
+    assert result.error
 
 
 @pytest.mark.anyio
-async def test_integrated_mcp_rejects_invalid_web_input() -> None:
+async def test_integrated_mcp_requires_valid_tool_arguments() -> None:
+    """Invalid MCP arguments should result in a failed invocation."""
+
     client = McpClientAdapter()
 
     result = await client.invoke(
-        create_integrated_server(),
-        "web_evidence",
+        create_test_server(),
+        "get_crypto_prices",
         {
-            "title": "",
-            "content": "Content",
-            "source_name": "Example",
-            "source_uri": "https://example.com",
+            "coin_ids": [],
+            "currency": "usd",
         },
     )
 
     assert result.success is False
-    assert result.error is not None
-
-
-@pytest.mark.anyio
-async def test_integrated_mcp_unknown_tool_fails() -> None:
-    client = McpClientAdapter()
-
-    result = await client.invoke(
-        create_integrated_server(),
-        "unknown_evidence_tool",
-    )
-
-    assert result.success is False
-    assert result.error is not None
+    assert result.output == ""
+    assert result.error

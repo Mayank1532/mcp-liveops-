@@ -1,4 +1,4 @@
-"""Integrated NEXUS-SHIELD MCP server."""
+"""Integrated MCP-LIVEOPS server."""
 
 from __future__ import annotations
 
@@ -6,20 +6,17 @@ from typing import Any
 
 from mcp.server import MCPServer
 
-from mcp_liveops.mcp.evidence_tools import register_evidence_tools
-from mcp_liveops.mcp.live_weather import register_live_weather_tool
+from mcp_liveops.mcp.coingecko_tools import register_coingecko_tools
 
 
 def create_integrated_server() -> MCPServer[Any]:
-    """Create an MCP server with evidence acquisition tools."""
+    """Create the MCP-LIVEOPS integrated server."""
 
     server = MCPServer(
-        "nexus-shield-evidence",
+        "mcp-liveops",
         version="0.1.0",
     )
 
-    evidence = register_evidence_tools(server)
-    register_live_weather_tool(server, evidence)
+    register_coingecko_tools(server)
 
     return server
-
