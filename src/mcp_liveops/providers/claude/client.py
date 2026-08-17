@@ -12,6 +12,7 @@ from mcp_liveops.config.settings import Settings
 from mcp_liveops.providers.claude.models import (
     ClaudeRequest,
     ClaudeResponse,
+    ClaudeToolCall,
     ClaudeUsage,
 )
 
@@ -50,27 +51,66 @@ class AnthropicClaudeClient:
 
         started = time.perf_counter()
 
-        message = self._client.messages.create(
-            model=self._settings.claude_model,
-            max_tokens=request.max_tokens,
-            temperature=request.temperature,
-            system=request.system_prompt or "",
-            messages=[
+        messages: list[dict[str, object]] = []
+
+        if request.messages:
+            messages.extend(
+                {
+                    "role": message.role,
+                    "content": message.content,
+                }
+                for message in request.messages
+            )
+        else:
+            messages.append(
                 {
                     "role": "user",
                     "content": request.prompt,
                 }
-            ],
+            )
+
+        message_kwargs: dict[str, object] = {
+            "model": self._settings.claude_model,
+            "max_tokens": request.max_tokens,
+            "temperature": request.temperature,
+            "system": request.system_prompt or "",
+            "messages": messages,
+        }
+
+        if request.tools:
+            message_kwargs["tools"] = [
+                {
+                    "name": tool.name,
+                    "description": tool.description,
+                    "input_schema": tool.input_schema,
+                }
+                for tool in request.tools
+            ]
+
+        message = self._client.messages.create(
+            **message_kwargs,
         )
 
         latency_ms = (time.perf_counter() - started) * 1000
 
         text_parts: list[str] = []
+        tool_calls: list[ClaudeToolCall] = []
 
         for block in message.content:
-            if getattr(block, "type", None) == "text":
+            block_type = getattr(block, "type", None)
+
+            if block_type == "text":
                 text_block = cast(TextBlock, block)
                 text_parts.append(text_block.text)
+
+            elif block_type == "tool_use":
+                tool_calls.append(
+                    ClaudeToolCall(
+                        id=block.id,
+                        name=block.name,
+                        input=dict(block.input),
+                    )
+                )
 
         text = "".join(text_parts).strip()
 
@@ -85,5 +125,6 @@ class AnthropicClaudeClient:
             usage=usage,
             latency_ms=latency_ms,
             stop_reason=message.stop_reason,
+            tool_calls=tuple(tool_calls),
         )
 

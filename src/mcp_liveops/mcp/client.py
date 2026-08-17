@@ -7,7 +7,10 @@ from typing import Any
 from mcp import Client
 from mcp.server import MCPServer
 
-from mcp_liveops.mcp.models import ToolExecutionResult
+from mcp_liveops.mcp.models import (
+    McpToolDefinition,
+    ToolExecutionResult,
+)
 
 
 class McpClientAdapter:
@@ -17,14 +20,34 @@ class McpClientAdapter:
         self,
         server: MCPServer[Any],
     ) -> list[str]:
-        """Discover available tools from an MCP server."""
+        """Discover available tool names from an MCP server."""
+
+        tools = await self.discover_tool_definitions(server)
+
+        return [
+            tool.name
+            for tool in tools
+        ]
+
+    async def discover_tool_definitions(
+        self,
+        server: MCPServer[Any],
+    ) -> list[McpToolDefinition]:
+        """Discover normalized tool definitions from an MCP server."""
 
         async with Client(server) as client:
-            tools = await client.list_tools()
+            response = await client.list_tools()
 
             return sorted(
-                tool.name
-                for tool in tools.tools
+                [
+                    McpToolDefinition(
+                        name=tool.name,
+                        description=tool.description or "",
+                        input_schema=dict(tool.input_schema),
+                    )
+                    for tool in response.tools
+                ],
+                key=lambda tool: tool.name,
             )
 
     async def invoke(
