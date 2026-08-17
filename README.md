@@ -1,310 +1,365 @@
-# NEXUS-SHIELD — Agentic Intelligence Evidence Foundation
+# MCP-LIVEOPS
 
-> A hard-level GenAI engineering project focused on trustworthy external evidence acquisition through MCP, live API integration, and deterministic validation.
+## LiveOps Agent --- MCP-Based Real-Time API Intelligence
 
----
+MCP-LIVEOPS is a mini industry-style Agentic AI project demonstrating
+how Claude can use the Model Context Protocol (MCP) to retrieve
+real-time cryptocurrency market data from CoinGecko and produce a
+grounded final response.
 
-## 1. Project Overview
+## Project Objective
 
-NEXUS-SHIELD is an evidence-oriented GenAI system foundation designed around a production-style separation between external information acquisition, evidence normalization, validation, tool execution, and model interaction.
+The project demonstrates this complete vertical slice:
 
-Project 9 intentionally implements a **focused vertical slice** of the larger architecture.
-
-```text
-Real External API
-       ↓
-MCP Tool
-       ↓
-Evidence Acquisition Layer
-       ↓
-Normalized Evidence
-       ↓
-MCP Result
-```
-
-The project does **not** claim to be a complete autonomous research agent.
-
-Advanced autonomous reasoning, RAG, conflict resolution, confidence scoring, evaluation frameworks, advanced security, and cloud deployment are intentionally deferred to later projects.
-
----
-
-# 2. Problem Statement
-
-LLM applications can produce convincing answers even when their underlying information is stale, incomplete, or unsupported.
-
-A production-oriented system needs explicit boundaries between:
-
-- external information acquisition
-- evidence normalization
-- evidence validation
-- tool execution
-- model interaction
-
-NEXUS-SHIELD explores this architecture by treating acquired information as an evidence object rather than allowing external data to flow directly into an LLM response.
-
----
-
-# 3. Project 9 Objective
-
-The compressed Project 9 objective is to demonstrate a real, testable path from external information to MCP-based evidence.
-
-### Primary objective
-
-```text
-Live API
-   ↓
-MCP
-   ↓
-Evidence Acquisition
-   ↓
-Normalized Result
-```
-
-### Secondary objectives
-
-- preserve strict application boundaries
-- maintain deterministic testing
-- demonstrate MCP discovery and invocation
-- handle external API failures
-- keep external dependencies minimal
-- maintain type safety
-- maintain Git/repository hygiene
-- produce an interview-defensible architecture
-
----
-
-# 4. What Project 9 Implements
-
-## Completed
-
-### Evidence foundation
-
-- Evidence records
-- source metadata
-- retrieval metadata
-- validation state
-- timestamps
-- reliability/confidence fields
-- supporting/conflicting evidence references
-- evidence repository
-- evidence validation
-
-### Acquisition foundation
-
-- local acquisition boundary
-- web acquisition boundary
-- external API acquisition boundary
-- normalized acquisition results
-
-### MCP
-
-- MCP client
-- MCP server
-- tool registry
-- tool discovery
-- tool invocation
-- error normalization
-- evidence MCP tools
-- integrated MCP server
-
-### Live integration
-
-A real Open-Meteo API integration was added.
-
-The `live_weather` MCP tool:
-
-1. accepts latitude and longitude
-2. requests current weather
-3. parses the live response
-4. converts the result into external API evidence
-5. passes it through the existing acquisition layer
-6. returns the normalized evidence through MCP
-
-### Claude
-
-The repository contains a Claude provider/gateway boundary under `src/nexus_shield/providers/claude/`.
-
-The generalized autonomous Claude → MCP tool-selection loop is intentionally deferred.
-
----
-
-# 5. Actual End-to-End Project 9 Path
-
-```text
-                 External World
-                       │
-                       ▼
-              Open-Meteo REST API
-                       │
-                       ▼
-               fetch_live_weather()
-                       │
-                       ▼
-                live_weather()
-                       │
-                       ▼
-              MCP Integrated Server
-                       │
-                       ▼
-             McpEvidenceTools
-                       │
-                       ▼
-             ExternalApiAcquirer
-                       │
-                       ▼
-              Normalized Evidence
-                       │
-                       ▼
-                  MCP Result
-```
-
-This is the primary demonstrated Project 9 capability.
-
----
-
-# 6. MCP Architecture
-
-The MCP layer provides a controlled interface between callers and application capabilities.
-
-Current integrated tools include:
-
-```text
-external_api_evidence
-live_weather
-web_evidence
-```
-
-### Tool discovery
-
-The MCP client can discover the available tools.
-
-### Tool invocation
-
-The MCP client can invoke a tool with structured arguments.
-
-### Error handling
-
-Tool failures are normalized rather than silently producing fabricated data.
-
----
-
-# 7. Live API Integration
-
-## Provider
-
-Open-Meteo public weather API.
-
-## Why Open-Meteo?
-
-It was selected for the compressed Project 9 implementation because:
-
-- it provides real live data
-- no API key is required
-- it avoids credential setup during development
-- it provides a clear REST interface
-- it is sufficient to demonstrate the required live-data architecture
-
-## Example request
-
-The live weather tool accepts:
-
-```text
-latitude
-longitude
-```
-
-Example:
-
-```text
-latitude  = 28.6139
-longitude = 77.2090
-```
-
-The integration retrieves current:
-
-- temperature
-- wind speed
-- timestamp
-
----
-
-# 8. Evidence Integration
-
-The live API response is not returned directly as an arbitrary string.
-
-```text
-API response
-     ↓
-structured content
-     ↓
-ExternalApiResponse
-     ↓
-ExternalApiAcquirer
-     ↓
-ToolExecutionResult
-     ↓
-MCP
-```
-
-This allows the live API path to reuse the existing NEXUS-SHIELD evidence acquisition boundary.
-
----
-
-# 9. Claude Provider
-
-The Claude provider is isolated under:
-
-```text
-src/nexus_shield/providers/claude/
-```
-
-The provider boundary isolates Anthropic communication from deterministic evidence logic.
-
-### Current limitation
-
-Project 9 does not contain the final autonomous loop:
-
-```text
+``` text
 User
  ↓
 Claude
  ↓
 Tool Selection
  ↓
-MCP
+MCP Client
  ↓
-Tool Result
+MCP Server
+ ↓
+CoinGecko Live API
+ ↓
+Structured Market Data
  ↓
 Claude
  ↓
-Answer
+Final Answer
 ```
 
-That capability is intentionally deferred rather than implemented as a rushed abstraction.
+The main technologies demonstrated are:
 
----
+-   Claude / Anthropic
+-   Model Context Protocol (MCP)
+-   Agentic tool calling
+-   CoinGecko live API
+-   Pydantic
+-   Python 3.12
+-   UV
+-   Pytest
+-   Ruff
+-   Dependency injection
+-   Git/GitHub
+-   Docker / CI foundation
 
-# 10. Repository Structure
+The project intentionally remains small and focused. It does not
+introduce RAG, vector databases, multi-agent systems, Kubernetes, or
+unnecessary cloud infrastructure.
 
-```text
-nexus-shield-agentic-intelligence/
+------------------------------------------------------------------------
+
+## 1. Problem Statement
+
+Traditional LLM applications often embed external API calls directly
+inside application logic.
+
+MCP introduces a standardized tool boundary:
+
+``` text
+Claude
+ ↓
+MCP Tool
+ ↓
+Provider
+ ↓
+External API
+```
+
+This project demonstrates that architecture with a real cryptocurrency
+market-data API.
+
+------------------------------------------------------------------------
+
+## 2. Use Case
+
+Example user request:
+
+``` text
+What are the current Bitcoin and Ethereum prices?
+```
+
+Claude can select:
+
+``` text
+get_crypto_prices
+```
+
+with arguments such as:
+
+``` json
+{
+  "coin_ids": ["bitcoin", "ethereum"],
+  "currency": "usd"
+}
+```
+
+The tool calls CoinGecko, returns structured market data, and the result
+is supplied back to Claude for the final response.
+
+------------------------------------------------------------------------
+
+## 3. Architecture
+
+``` text
+                         ┌──────────────┐
+                         │     User     │
+                         └──────┬───────┘
+                                │
+                                ▼
+                         ┌──────────────┐
+                         │    Claude    │
+                         │ Tool Select  │
+                         └──────┬───────┘
+                                │
+                             tool_use
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │  LiveOpsAgent   │
+                       │  Orchestration  │
+                       └────────┬────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │ MCP Client      │
+                       │ McpClientAdapter │
+                       └────────┬────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │   MCP Server    │
+                       │get_crypto_prices│
+                       └────────┬────────┘
+                                │
+                                ▼
+                       ┌─────────────────┐
+                       │ CoinGeckoClient │
+                       └────────┬────────┘
+                                │
+                                ▼
+                          CoinGecko API
+                                │
+                                ▼
+                          Market Data
+                                │
+                                ▼
+                             Claude
+                                │
+                                ▼
+                           Final Answer
+```
+
+------------------------------------------------------------------------
+
+## 4. Agentic Tool-Calling Flow
+
+The project uses a two-turn Claude workflow.
+
+### Turn 1
+
+``` text
+User Request
+ ↓
+Claude
+ ↓
+Claude determines live data is required
+ ↓
+Claude returns tool_use
+```
+
+Example:
+
+``` json
+{
+  "name": "get_crypto_prices",
+  "input": {
+    "coin_ids": ["bitcoin", "ethereum"],
+    "currency": "usd"
+  }
+}
+```
+
+### Tool Execution
+
+``` text
+Claude
+ ↓
+LiveOpsAgent
+ ↓
+McpClientAdapter
+ ↓
+MCP Server
+ ↓
+CoinGecko
+```
+
+### Turn 2
+
+``` text
+MCP Result
+ ↓
+LiveOpsAgent
+ ↓
+Claude
+ ↓
+Final Answer
+```
+
+This demonstrates genuine agentic tool use rather than manually
+inserting an API response into a prompt.
+
+------------------------------------------------------------------------
+
+## 5. MCP Tool
+
+Current primary MCP tool:
+
+``` text
+get_crypto_prices
+```
+
+Description:
+
+``` text
+Get live cryptocurrency prices from CoinGecko.
+```
+
+Input:
+
+``` json
+{
+  "coin_ids": ["bitcoin", "ethereum"],
+  "currency": "usd"
+}
+```
+
+Conceptual schema:
+
+``` json
+{
+  "type": "object",
+  "properties": {
+    "coin_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "currency": {
+      "type": "string",
+      "default": "usd"
+    }
+  },
+  "required": ["coin_ids"]
+}
+```
+
+The MCP client discovers the tool and its schema dynamically.
+
+------------------------------------------------------------------------
+
+## 6. Core Components
+
+### `LiveOpsAgent`
+
+Location:
+
+``` text
+src/mcp_liveops/core/agent.py
+```
+
+Responsibilities:
+
+1.  Discover MCP tools.
+2.  Convert MCP tools into Claude tool definitions.
+3.  Send the initial Claude request.
+4.  Detect tool calls.
+5.  Invoke MCP tools.
+6.  Normalize tool results.
+7.  Build the second Claude request.
+8.  Return the final response.
+
+### `McpClientAdapter`
+
+Provides the application-facing MCP boundary.
+
+Responsibilities:
+
+-   Tool discovery
+-   Tool definition normalization
+-   Tool invocation
+-   Result normalization
+-   Error normalization
+-   Text extraction
+
+### `McpCoinGeckoTools`
+
+Exposes CoinGecko functionality through MCP.
+
+### `CoinGeckoClient`
+
+Owns the external CoinGecko API interaction.
+
+### `AnthropicClaudeClient`
+
+Owns the Anthropic API integration behind the `ClaudeClient`
+abstraction.
+
+------------------------------------------------------------------------
+
+## 7. Project Structure
+
+``` text
+mcp-liveops/
 │
 ├── .github/
 │   └── workflows/
 │
 ├── docs/
-│   ├── evidence-model.md
-│   └── PROJECT_9_FAILURE_ANALYSIS.md
 │
 ├── src/
-│   └── nexus_shield/
+│   └── mcp_liveops/
 │       ├── acquisition/
+│       │   ├── api_models.py
+│       │   ├── api_normalization.py
+│       │   ├── external_api.py
+│       │   ├── interface.py
+│       │   ├── local_text.py
+│       │   ├── models.py
+│       │   ├── normalization.py
+│       │   ├── web.py
+│       │   └── web_models.py
+│       │
 │       ├── config/
+│       │   └── settings.py
+│       │
 │       ├── core/
+│       │   ├── agent.py
+│       │   └── health.py
+│       │
 │       ├── evidence/
+│       │   ├── memory.py
+│       │   ├── models.py
+│       │   ├── repository.py
+│       │   ├── validation.py
+│       │   └── validator.py
+│       │
 │       ├── mcp/
+│       │   ├── client.py
+│       │   ├── coingecko_tools.py
+│       │   ├── integration_server.py
+│       │   ├── models.py
+│       │   ├── registry.py
+│       │   └── server.py
+│       │
 │       └── providers/
 │           └── claude/
+│               ├── client.py
+│               └── models.py
 │
 ├── tests/
 │   └── unit/
@@ -319,543 +374,854 @@ nexus-shield-agentic-intelligence/
 └── uv.lock
 ```
 
-Unused empty placeholder packages and unused tooling directories were removed during the final Project 9 cleanup.
+Project 9 was used as the verified baseline where appropriate. Proven
+infrastructure was reused instead of rebuilt unnecessarily.
 
----
+------------------------------------------------------------------------
 
-# 11. Component Responsibilities
+## 8. Technology Stack
 
-## `acquisition/`
+  Technology           Purpose
+  -------------------- -----------------------------------
+  Python 3.12          Application language
+  UV                   Environment/dependency management
+  Claude / Anthropic   LLM and tool-selection layer
+  MCP                  Tool interoperability
+  CoinGecko            Real-time market data
+  Pydantic             Validation/domain models
+  Pytest               Automated testing
+  Ruff                 Linting
+  Git                  Version control
+  GitHub               Repository hosting
+  Docker               Containerization foundation
+  GitHub Actions       CI foundation
 
-Defines acquisition boundaries and normalizes external information.
+------------------------------------------------------------------------
 
-## `evidence/`
+## 9. Environment
 
-Defines the evidence domain and evidence persistence/validation behavior.
+Python requirement:
 
-## `mcp/`
+``` text
+Python >= 3.12,<3.13
+```
 
-Provides MCP server, client, registry, evidence tools, and the live weather MCP tool.
+Verified development version:
 
-## `providers/claude/`
+``` text
+Python 3.12.10
+```
 
-Provides the Claude integration boundary.
+------------------------------------------------------------------------
 
-## `config/`
+## 10. Installation
 
-Provides application configuration.
+Clone the repository:
 
-## `core/`
+``` powershell
+git clone https://github.com/Mayank1532/mcp-liveops-.git
+cd mcp-liveops-
+```
 
-Provides core application-level infrastructure.
+Synchronize the environment:
 
-## `tests/`
-
-Contains deterministic tests for the implemented functionality.
-
----
-
-# 12. Technology Stack
-
-| Technology | Purpose |
-|---|---|
-| Python 3.12 | Application language |
-| UV | Dependency/environment management |
-| Anthropic SDK | Claude provider |
-| MCP SDK | Tool protocol/integration |
-| Pydantic | Data validation/modeling |
-| Pytest | Testing |
-| Ruff | Linting |
-| Mypy | Static type checking |
-| Docker | Container foundation |
-| GitHub Actions | CI foundation |
-| SonarQube configuration | Code-quality integration |
-| Open-Meteo | Live API demonstration |
-
-The final live weather implementation uses Python's standard-library HTTP functionality and does not add another runtime HTTP dependency.
-
----
-
-# 13. Installation
-
-Requirements:
-
-- Python 3.12
-- UV
-- Git
-
-Install dependencies:
-
-```powershell
+``` powershell
 uv sync
 ```
 
----
+Verify Python:
 
-# 14. Configuration
-
-Environment configuration is represented through:
-
-```text
-.env.example
+``` powershell
+uv run python --version
 ```
 
-Secrets must never be committed to Git.
+------------------------------------------------------------------------
 
-Production credentials should only be introduced at the final integration/validation stage.
+## 11. Configuration
 
-The Project 9 Open-Meteo demonstration does not require an API key.
+Create the local environment file:
 
----
-
-# 15. Testing
-
-Run:
-
-```powershell
-uv run pytest tests/ -q
+``` powershell
+Copy-Item .env.example .env
 ```
 
-Final Project 9 validation:
+Configure:
 
-```text
-92 passed
+``` text
+ANTHROPIC_API_KEY=your_api_key_here
 ```
 
-The live API itself is not used as the dependency for every unit test.
+Never commit `.env` or real credentials.
 
----
+Use `.env.example` for safe placeholder configuration.
 
-# 16. Static Quality Checks
+------------------------------------------------------------------------
 
-Targeted Ruff validation for the Project 9 implementation:
+## 12. CoinGecko Data Model
 
-```powershell
-uv run ruff check `
-    src/nexus_shield/mcp/live_weather.py `
-    src/nexus_shield/mcp/integration_server.py `
-    tests/unit/test_live_weather.py `
-    tests/unit/test_mcp_evidence_tools.py
+Normalized market data contains:
+
+``` text
+coin_id
+currency
+price
+change_24h_percent
+last_updated_at
 ```
 
-Result:
+Example:
 
-```text
-All checks passed
+``` json
+{
+  "coin_id": "bitcoin",
+  "currency": "usd",
+  "price": 63534.0,
+  "change_24h_percent": 0.82,
+  "last_updated_at": 1786944230
+}
 ```
 
-Targeted Mypy validation:
+Live values change continuously and therefore are not hard-coded.
 
-```powershell
-uv run mypy `
-    src/nexus_shield/mcp/live_weather.py `
-    src/nexus_shield/mcp/integration_server.py `
-    tests/unit/test_live_weather.py
+------------------------------------------------------------------------
+
+## 13. Dependency Injection
+
+The project uses dependency injection for provider boundaries.
+
+Example:
+
+``` python
+McpCoinGeckoTools(
+    client=fake_client
+)
 ```
 
-Result:
+and:
 
-```text
-Success: no issues found
+``` python
+LiveOpsAgent(
+    claude_client=fake_claude
+)
 ```
 
-Git whitespace validation:
+Benefits:
 
-```powershell
-git diff --check
-```
+-   Deterministic testing
+-   Provider isolation
+-   Easier maintenance
+-   Easier provider replacement
 
-Result:
+------------------------------------------------------------------------
 
-```text
-clean
-```
+## 14. Error Handling
 
----
+Important failure cases include:
 
-# 17. Live API Verification
+  Failure                     Expected behavior
+  --------------------------- ----------------------------------
+  Empty cryptocurrency list   Tool validation failure
+  Unknown MCP tool            Normalized MCP failure
+  CoinGecko unavailable       Provider/API failure
+  Invalid API response        Validation/normalization failure
+  Missing Anthropic key       Configuration error
+  MCP tool failure            Failure propagated to agent
+  No Claude tool call         Direct Claude response
+  Claude requests a tool      MCP tool executed
 
-A real Open-Meteo API smoke test was executed against:
+The application does not silently turn external failures into successful
+empty responses.
 
-```text
-latitude  = 28.6139
-longitude = 77.2090
-```
+------------------------------------------------------------------------
 
-The API returned live current-weather information including temperature, wind speed, and timestamp.
+## 15. Why MCP?
 
-This was intentionally performed separately from deterministic unit tests.
+A direct implementation could be:
 
----
-
-# 18. MCP Verification
-
-The integrated MCP server was exercised through the MCP client.
-
-Discovered tools:
-
-```text
-external_api_evidence
-live_weather
-web_evidence
-```
-
-The `live_weather` MCP tool was then invoked with real coordinates.
-
-The MCP call returned the normalized evidence result.
-
-Therefore Project 9 verifies both MCP discovery and MCP invocation.
-
----
-
-# 19. Testing Strategy
-
-The project separates deterministic testing from live integration testing.
-
-### Deterministic tests
-
-Used for:
-
-- evidence behavior
-- acquisition normalization
-- MCP behavior
-- API response parsing
-- failure behavior
-- model validation
-
-### Live smoke test
-
-Used to prove that the external API integration works against the actual service.
-
-This prevents the normal test suite from becoming dependent on network availability.
-
----
-
-# 20. Failure Handling
-
-The live weather integration handles:
-
-- HTTP errors
-- URL/network errors
-- timeouts
-- invalid JSON
-- missing current-weather data
-- evidence acquisition failure
-
-The system does not silently convert failed acquisition into successful evidence.
-
-```text
-External failure
-      ↓
-Controlled error
-      ↓
-No fabricated evidence
-```
-
----
-
-# 21. Performance
-
-The Project 9 live path is network-bound.
-
-Latency is influenced by:
-
-- external API response time
-- network conditions
-- timeout configuration
-
-Deterministic unit tests remain fast and independent of the external API.
-
----
-
-# 22. Cost
-
-The Project 9 live API demonstration uses a public Open-Meteo endpoint without an API key.
-
-The Claude provider is prepared for Anthropic integration, but repeated Claude API calls are not required for the compressed Project 9 validation.
-
-Therefore the core implementation and deterministic tests can be developed without recurring model/API expenditure.
-
----
-
-# 23. Security
-
-Implemented principles include:
-
-- environment-based credential configuration
-- no secrets committed to Git
-- typed input validation
-- controlled external API errors
-- separation between deterministic application logic and provider integrations
-
-Advanced agent tool authorization, policy enforcement, and zero-trust MCP security are deferred to the later security-focused project.
-
----
-
-# 24. Docker and DevOps
-
-The repository retains:
-
-```text
-Dockerfile
-docker-compose.yml
-.github/
-```
-
-These provide the engineering/CI foundation already present in the project.
-
-The compressed Project 9 release does not claim full production cloud deployment.
-
----
-
-# 25. Evaluation Status
-
-Project 9 does not contain the full DeepEval/Promptfoo evaluation harness.
-
-The current project instead uses:
-
-- deterministic tests
-- integration checks
-- live API smoke testing
-- MCP discovery/invocation verification
-- linting
-- type checking
-
-Advanced agent trajectory evaluation, regression evaluation, and RAG evaluation are deferred to later projects.
-
----
-
-# 26. Bruno Status
-
-Bruno was not used meaningfully in the final compressed Project 9 implementation.
-
-The repository previously contained an empty Bruno directory but no tracked collection, request, environment, or assertion.
-
-It was therefore removed rather than retaining an empty technology placeholder.
-
-Bruno remains a planned tool for the later API/DevOps testing workflow where it can be used meaningfully.
-
----
-
-# 27. Deferred Capabilities
-
-The following are intentionally outside the final Project 9 implementation:
-
-### Agentic orchestration
-
-- Claude autonomous tool selection
-- planning
-- tool-use loop
-- trajectory management
-
-### Live web
-
-- generalized live web acquisition
-- web research workflow
-
-### RAG
-
-- private document retrieval
-- hybrid retrieval
-- reranking
-- query rewriting
-
-### Evidence reasoning
-
-- conflict detection engine
-- advanced confidence engine
-- evidence-aware answer/refusal policy
-
-### Evaluation
-
-- DeepEval
-- Promptfoo
-- agent trajectory evaluation
-- regression evaluation
-
-### Security
-
-- tool authorization
-- policy enforcement
-- zero-trust MCP gateway
-
-### Cloud/production
-
-- AWS
-- AgentCore
-- advanced observability
-- distributed deployment
-- recovery engineering
-
-These are future-project responsibilities, not hidden unfinished work.
-
----
-
-# 28. Roadmap Deviation
-
-The original Project 9 roadmap described a larger Level-A scope including Claude, MCP, live APIs, live web, evidence, agent loop, basic RAG, and citations.
-
-The final implementation deliberately compresses Project 9 around the highest-value working vertical slice:
-
-```text
-Live API
- ↓
-MCP
- ↓
-Evidence
-```
-
-This deviation was accepted because:
-
-- the project already had a substantial foundation
-- remaining work was becoming disproportionately time-consuming
-- the live API/MCP/evidence path provides the strongest immediate demonstrable capability
-- deferred capabilities map naturally to later projects
-- adding unused frameworks would increase complexity without improving the completed capability
-
-This follows the project's scope-control principle: do not add technology for the sake of technology.
-
----
-
-# 29. Challenges and Lessons
-
-Detailed failure analysis is documented in:
-
-```text
-docs/PROJECT_9_FAILURE_ANALYSIS.md
-```
-
-Major lessons:
-
-1. Build the visible vertical slice early.
-2. Avoid generalized abstractions before proving the end-to-end path.
-3. Keep deterministic tests separate from live integrations.
-4. Use targeted formatting and linting.
-5. Avoid unnecessary dependencies.
-6. Remove unused placeholder packages.
-7. Treat documentation and repository hygiene as release work.
-8. Record deferred capabilities explicitly instead of pretending they are implemented.
-
----
-
-# 30. Interview Explanation
-
-### What is NEXUS-SHIELD?
-
-NEXUS-SHIELD is an evidence-oriented GenAI architecture that separates external information acquisition from evidence normalization and model interaction.
-
-### Why MCP?
-
-MCP provides a structured tool interface between an AI application and capabilities such as external APIs.
-
-### What makes Project 9 useful?
-
-It demonstrates a real external API being exposed through MCP and passed through the existing evidence acquisition layer rather than returning raw external information directly.
-
-### Why is evidence a separate layer?
-
-External information should have provenance and validation boundaries before becoming part of an AI workflow.
-
-### Why deterministic tests?
-
-Network APIs are nondeterministic. Unit tests should remain reproducible, while a separate live smoke test verifies the real integration.
-
-### Why was the Claude agent loop deferred?
-
-The generalized loop introduced substantial SDK/orchestration complexity without being necessary to prove the core live API → MCP → evidence capability within the Project 9 time constraint.
-
-### Why not implement RAG?
-
-RAG is intentionally separated into later projects so Project 9 can focus on MCP and live external evidence.
-
-### Why remove Bruno?
-
-The repository had no meaningful Bruno implementation. Keeping an empty directory would provide no engineering value. Bruno is planned for a later API/DevOps-focused project.
-
-### What would you build next?
-
-The next logical capability is the Claude tool-use loop:
-
-```text
-User
- ↓
+``` text
 Claude
  ↓
-Tool selection
+Application API code
  ↓
-MCP
- ↓
-Live evidence
- ↓
-Claude
- ↓
-Grounded answer
+CoinGecko
 ```
 
-That can then be extended into RAG, multi-agent research, evaluation, security, and reliability projects.
+MCP provides:
 
----
-
-# 31. Project 9 Completion Summary
-
-Project 9 demonstrates a hard-level engineering vertical slice:
-
-```text
-Real External API
-       ↓
+``` text
+Claude
+ ↓
 MCP Tool
-       ↓
-Evidence Acquisition
-       ↓
-Normalized Evidence
-       ↓
-MCP Result
+ ↓
+Provider
 ```
 
-Validated with:
+Benefits:
 
-```text
-92 tests passing
-Ruff passing
-Targeted Mypy passing
-Real API smoke test passing
-Real MCP invocation passing
-Git diff check passing
+-   Standardized tool interfaces
+-   Tool discovery
+-   Explicit schemas
+-   Clear boundaries
+-   Interoperability
+-   Easier future tool additions
+-   Separation between model reasoning and external capabilities
+
+------------------------------------------------------------------------
+
+## 16. Why a Claude Abstraction?
+
+The application depends on:
+
+``` text
+ClaudeClient
 ```
 
-The repository was also cleaned so that only justified implementation, tests, documentation, CI/configuration, and deployment foundation remain.
+rather than directly depending on the Anthropic implementation.
 
----
+This allows:
 
-# 32. Final Project Status
+-   Deterministic fake clients
+-   Fast unit tests
+-   Provider replacement
+-   Cleaner architecture
+-   Reduced coupling
 
-```text
-Foundation                 COMPLETE
-Evidence model             COMPLETE
-Acquisition layer          COMPLETE
-MCP core                   COMPLETE
-MCP evidence tools         COMPLETE
-Live API integration       COMPLETE
-Live MCP invocation        COMPLETE
-Failure handling           COMPLETE
-Deterministic testing      COMPLETE
-Static validation          COMPLETE
-Claude provider boundary   COMPLETE
-Autonomous agent loop      DEFERRED
-Advanced RAG               DEFERRED
-Conflict/confidence        DEFERRED
-DeepEval/Promptfoo         DEFERRED
-Bruno                      DEFERRED
-Advanced security          DEFERRED
-AWS                        DEFERRED
+------------------------------------------------------------------------
+
+## 17. Testing Strategy
+
+Testing is proportional to the project scope.
+
+Coverage includes:
+
+-   Unit tests
+-   MCP tests
+-   CoinGecko tests
+-   Claude gateway tests
+-   Agent orchestration tests
+-   Failure tests
+-   Live API validation
+-   End-to-end validation
+
+### Full Suite
+
+``` powershell
+uv run pytest -q
 ```
 
-Project 9 is ready for its final Git/release gate after documentation verification.
+Verified:
 
----
+``` text
+105 passed
+```
 
-# 33. License / Usage
+### Ruff
 
-This project is a portfolio and learning implementation.
+``` powershell
+uv run ruff check src tests
+```
 
-External services remain subject to their own terms and availability.
+Verified:
+
+``` text
+All checks passed!
+```
+
+### Agent Tests
+
+``` powershell
+uv run pytest tests\unit\test_agent.py -q
+```
+
+Verified:
+
+``` text
+3 passed
+```
+
+### MCP CoinGecko Tests
+
+``` powershell
+uv run pytest tests\unit\test_mcp_coingecko_tools.py -q
+```
+
+Verified:
+
+``` text
+4 passed
+```
+
+### Claude Gateway Tests
+
+``` powershell
+uv run pytest tests\unit\test_claude_gateway.py -q
+```
+
+Verified:
+
+``` text
+7 passed
+```
+
+------------------------------------------------------------------------
+
+## 18. Live API Validation
+
+The CoinGecko integration was successfully validated against the real
+API.
+
+The validated path was:
+
+``` text
+MCP
+ ↓
+get_crypto_prices
+ ↓
+CoinGecko
+ ↓
+Bitcoin + Ethereum
+ ↓
+Structured MCP Result
+```
+
+Real live values were retrieved successfully.
+
+------------------------------------------------------------------------
+
+## 19. End-to-End Validation
+
+The complete vertical slice was validated using:
+
+-   Deterministic Claude behavior
+-   Real MCP server
+-   Real CoinGecko API
+-   Agent orchestration
+
+Validated flow:
+
+``` text
+MCP tool discovery
+        ↓
+Claude tool definition
+        ↓
+Claude tool call
+        ↓
+MCP invocation
+        ↓
+Real CoinGecko API
+        ↓
+Structured result
+        ↓
+Tool result returned to Claude
+        ↓
+Final Claude response
+```
+
+Validation result:
+
+``` text
+VALIDATION RESULT: PASS
+```
+
+------------------------------------------------------------------------
+
+## 20. Bruno
+
+Bruno is part of the final API-validation gate.
+
+Expected coverage:
+
+-   Successful API request
+-   Expected response structure
+-   Valid cryptocurrency identifiers
+-   Invalid input
+-   Relevant API failure behavior
+
+Bruno should complement, not duplicate, the Pytest suite.
+
+Final project completion requires the Bruno validation gate to pass.
+
+------------------------------------------------------------------------
+
+## 21. DevOps
+
+The project retains the verified baseline infrastructure where
+appropriate:
+
+``` text
+UV
+Git
+GitHub
+Docker
+GitHub Actions
+Ruff
+Mypy configuration
+SonarQube configuration
+```
+
+The project intentionally avoids unnecessary cloud/platform complexity.
+
+------------------------------------------------------------------------
+
+## 22. Docker
+
+Build the image:
+
+``` powershell
+docker build -t mcp-liveops .
+```
+
+Docker provides a reproducible execution environment.
+
+Docker is supporting infrastructure rather than the main learning
+objective.
+
+------------------------------------------------------------------------
+
+## 23. Security
+
+Security principles:
+
+-   Keep API keys in environment variables.
+-   Never commit `.env`.
+-   Use `.env.example` for placeholders.
+-   Validate external input.
+-   Normalize external API responses.
+-   Propagate failures explicitly.
+-   Keep provider credentials outside source code.
+
+------------------------------------------------------------------------
+
+## 24. Cost
+
+Most automated development testing is inexpensive because Claude is
+mocked during unit tests.
+
+No database, GPU, vector database, or cloud infrastructure is required
+for the core workflow.
+
+Real Claude API requests may incur usage costs.
+
+The intended pattern is:
+
+``` text
+Unit Tests
+ ↓
+Fake Claude
+```
+
+and:
+
+``` text
+Final Validation
+ ↓
+Real Claude Credentials
+```
+
+------------------------------------------------------------------------
+
+## 25. Performance
+
+The main latency contributors are:
+
+``` text
+Claude request
++
+MCP execution
++
+CoinGecko network request
++
+Claude second request
+```
+
+The two-turn agentic flow naturally introduces more latency than a
+single LLM request.
+
+Possible production improvements:
+
+-   Caching
+-   Connection pooling
+-   Timeouts
+-   Bounded retries
+-   Rate-limit handling
+-   Streaming
+-   Metrics
+-   Tracing
+-   Observability
+
+These are outside the current mini-project scope.
+
+------------------------------------------------------------------------
+
+## 26. Limitations
+
+Current limitations:
+
+-   One primary external API
+-   One primary MCP tool
+-   Limited agent loop
+-   No persistent memory
+-   No multi-agent architecture
+-   No RAG
+-   No vector database
+-   External API dependency
+-   Claude dependency
+-   No production cloud deployment
+
+These limitations are intentional to prevent scope creep.
+
+------------------------------------------------------------------------
+
+## 27. Design Decisions
+
+### One External API
+
+CoinGecko is sufficient to demonstrate live API + MCP integration.
+
+### One Primary MCP Tool
+
+`get_crypto_prices` is sufficient to demonstrate discovery, schema,
+invocation, and result handling.
+
+### Provider Boundary
+
+CoinGecko HTTP logic remains separate from MCP orchestration.
+
+### Claude Abstraction
+
+The application depends on `ClaudeClient`, enabling deterministic tests.
+
+### Two-Turn Agentic Loop
+
+The workflow is:
+
+``` text
+Claude → Tool
+Tool → Claude
+```
+
+This demonstrates actual agentic tool use.
+
+### Deterministic Tests
+
+Mocks and fakes are preferred during development. Real credentials and
+external services are reserved for final validation.
+
+------------------------------------------------------------------------
+
+## 28. Interview Questions and Answers
+
+### Q1. What is MCP?
+
+MCP stands for Model Context Protocol. It provides a standardized way
+for AI applications to interact with external tools and capabilities.
+
+### Q2. Why use MCP instead of directly calling CoinGecko?
+
+MCP provides a standardized tool boundary. Claude does not need to know
+the implementation details of the external API.
+
+### Q3. How does Claude decide to use the tool?
+
+Claude receives the available tool definitions and their schemas. Based
+on the user's request, it can produce a `tool_use` request.
+
+### Q4. What is tool discovery?
+
+Tool discovery means asking the MCP server which tools it exposes and
+obtaining their names, descriptions, and input schemas.
+
+### Q5. Why use dependency injection?
+
+It allows real providers to be replaced with deterministic test doubles,
+improving testability and reducing external dependencies during testing.
+
+### Q6. Why are most Claude tests mocked?
+
+Real model calls can be slower, expensive, nondeterministic, and
+credential-dependent. Unit tests should be fast and repeatable.
+
+### Q7. Why are there two Claude calls?
+
+The first call decides whether a tool is needed. The second call
+receives the tool result and produces the final answer.
+
+### Q8. What happens if CoinGecko fails?
+
+The provider failure is propagated through the MCP layer and normalized
+by the client so the agent can handle the failure.
+
+### Q9. What happens if Claude requests an unknown tool?
+
+The MCP client returns a normalized unsuccessful result rather than
+silently executing an unavailable capability.
+
+### Q10. How would you scale this system?
+
+Potential production improvements include caching, retries, rate-limit
+handling, observability, authentication, authorization, multiple MCP
+servers, tool governance, and persistent state.
+
+------------------------------------------------------------------------
+
+## 29. Lessons Learned
+
+### MCP is a tool interoperability layer
+
+It separates AI reasoning from external capabilities.
+
+### Tool schemas matter
+
+Claude needs a clear description of what the tool does and which
+arguments it accepts.
+
+### Agentic workflows are loops
+
+``` text
+LLM
+ ↓
+Tool Request
+ ↓
+Tool Execution
+ ↓
+Tool Result
+ ↓
+LLM
+```
+
+### Provider boundaries improve testing
+
+Claude and CoinGecko can be replaced with deterministic fakes.
+
+### Live validation matters
+
+Mocks verify application behavior; live validation verifies the actual
+external integration.
+
+------------------------------------------------------------------------
+
+## 30. Project 9 Reuse
+
+Project 9 was used as the verified baseline where appropriate.
+
+Reused patterns include:
+
+-   UV
+-   Configuration
+-   Environment management
+-   Pydantic
+-   Acquisition boundaries
+-   MCP integration
+-   Claude provider abstraction
+-   Testing patterns
+-   Docker
+-   CI foundation
+-   Linting
+-   Documentation patterns
+
+Project 10 adds the new focus:
+
+``` text
+MCP
++
+Claude
++
+Live API
++
+Agentic Tool Use
+```
+
+------------------------------------------------------------------------
+
+## 31. Why the Project Is Small
+
+The objective is not to build a full AI platform.
+
+The objective is to prove one technically meaningful vertical slice:
+
+``` text
+Claude
++
+MCP
++
+Live API
++
+Agentic Tool Calling
++
+Testing
++
+Industry Engineering
+```
+
+Once the required capability works and is validated, unrelated
+functionality becomes scope creep.
+
+------------------------------------------------------------------------
+
+## 32. Future Improvements
+
+Potential future work, outside current Project 10 scope:
+
+-   Additional MCP tools
+-   Multiple market-data providers
+-   Currency conversion
+-   Market-news tool
+-   Caching
+-   Retry policies
+-   Rate-limit management
+-   Persistent conversation state
+-   Streaming
+-   Rich observability
+-   Authentication
+-   Authorization
+-   Cloud deployment
+-   MCP server hosting
+-   Production monitoring
+
+------------------------------------------------------------------------
+
+## 33. Final Architecture Summary
+
+``` text
+                    USER
+                      │
+                      ▼
+                 ┌─────────┐
+                 │ Claude  │
+                 └────┬────┘
+                      │
+                   tool_use
+                      │
+                      ▼
+              ┌───────────────┐
+              │ LiveOpsAgent  │
+              └───────┬───────┘
+                      │
+                      ▼
+             ┌─────────────────┐
+             │ McpClientAdapter│
+             └────────┬────────┘
+                      │
+                      ▼
+             ┌─────────────────┐
+             │   MCP Server    │
+             │                 │
+             │get_crypto_prices│
+             └────────┬────────┘
+                      │
+                      ▼
+             ┌─────────────────┐
+             │ CoinGeckoClient │
+             └────────┬────────┘
+                      │
+                      ▼
+                CoinGecko API
+                      │
+                      ▼
+                  Market Data
+                      │
+                      ▼
+                   Claude #2
+                      │
+                      ▼
+                 FINAL ANSWER
+```
+
+------------------------------------------------------------------------
+
+## 34. Release Checklist
+
+``` text
+[✓] Project objective implemented
+[✓] Real CoinGecko API validated
+[✓] MCP server validated
+[✓] MCP tool validated
+[✓] MCP tool discovery validated
+[✓] MCP schema exposed
+[✓] Claude tool definition generated
+[✓] Claude tool call handled
+[✓] MCP tool invocation works
+[✓] Tool result returned to Claude
+[✓] Two-turn agentic loop works
+[✓] MCP failure handling validated
+[✓] Invalid input handling validated
+[✓] Pytest passes
+[✓] Ruff passes
+[✓] End-to-end deterministic validation passes
+[✓] Real CoinGecko validation passes
+[ ] Bruno validation completed
+[ ] Final DevOps validation completed
+[ ] Final repository cleanliness verified
+```
+
+Unchecked items must not be marked complete until actually validated.
+
+------------------------------------------------------------------------
+
+## 35. Current Project Status
+
+**Core agentic vertical slice: COMPLETE**
+
+Verified:
+
+``` text
+105 automated tests passing
+Ruff checks passing
+Real CoinGecko API working
+MCP tool discovery working
+MCP tool invocation working
+Claude tool-call orchestration working
+Two-turn Claude/MCP loop working
+End-to-end deterministic validation passing
+```
+
+Final release remains gated by the remaining Bruno, DevOps, and
+repository-cleanliness checks.
+
+------------------------------------------------------------------------
+
+## 36. Final Takeaway
+
+MCP-LIVEOPS demonstrates a complete agentic tool-use architecture using
+a real external API:
+
+``` text
+User Request
+     ↓
+Claude Reasoning
+     ↓
+MCP Tool Selection
+     ↓
+MCP Invocation
+     ↓
+Real CoinGecko API
+     ↓
+Structured Result
+     ↓
+Claude
+     ↓
+Grounded Final Answer
+```
+
+The project combines:
+
+``` text
+Claude
++
+MCP
++
+Live API
++
+Agentic AI
++
+Structured Tool Schemas
++
+Error Handling
++
+Testing
++
+DevOps
+```
+
+while keeping the implementation small enough to understand, test,
+demonstrate, and explain.
