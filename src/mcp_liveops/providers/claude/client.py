@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import time
-from typing import Protocol, cast
+from typing import Any, Protocol, cast
 
 from anthropic import Anthropic
 from anthropic.types import TextBlock
@@ -69,7 +69,7 @@ class AnthropicClaudeClient:
                 }
             )
 
-        message_kwargs: dict[str, object] = {
+        message_kwargs: dict[str, Any] = {
             "model": self._settings.claude_model,
             "max_tokens": request.max_tokens,
             "temperature": request.temperature,
@@ -127,4 +127,5 @@ class AnthropicClaudeClient:
             stop_reason=message.stop_reason,
             tool_calls=tuple(tool_calls),
         )
+
 
