@@ -1,7 +1,7 @@
 import pytest
 from pydantic import ValidationError
 
-from nexus_shield.acquisition import (
+from mcp_liveops.acquisition import (
     AcquisitionStatus,
     ExternalApiAcquirer,
     ExternalApiNormalizer,
@@ -179,3 +179,4 @@ def test_external_api_normalization_is_deterministic() -> None:
     second = normalizer.normalize(response)
 
     assert first == second
+

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from nexus_shield.mcp import (
+from mcp_liveops.mcp import (
     McpClientAdapter,
     McpEvidenceTools,
     create_integrated_server,

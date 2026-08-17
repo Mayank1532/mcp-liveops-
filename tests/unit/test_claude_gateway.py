@@ -3,8 +3,8 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from nexus_shield.config import Settings
-from nexus_shield.providers.claude import (
+from mcp_liveops.config import Settings
+from mcp_liveops.providers.claude import (
     AnthropicClaudeClient,
     ClaudeRequest,
 )
@@ -194,3 +194,4 @@ def test_non_text_blocks_are_ignored() -> None:
     )
 
     assert response.text == "Final text."
+

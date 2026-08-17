@@ -2,7 +2,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from nexus_shield.evidence import (
+from mcp_liveops.evidence import (
     EvidenceRecord,
     EvidenceValidator,
     RetrievalMethod,
@@ -111,3 +111,4 @@ def test_naive_now_is_rejected() -> None:
 
     with pytest.raises(ValueError, match='timezone-aware'):
         EvidenceValidator().validate(evidence, now=datetime.now())
+

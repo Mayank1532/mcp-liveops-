@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from nexus_shield.acquisition import (
+from mcp_liveops.acquisition import (
     AcquisitionStatus,
     EvidenceAcquirer,
     LocalTextAcquirer,
@@ -79,3 +79,4 @@ def test_acquisition_interface_is_implemented() -> None:
     acquirer = LocalTextAcquirer()
 
     assert isinstance(acquirer, EvidenceAcquirer)
+

@@ -2,7 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
-from nexus_shield.mcp.live_weather import fetch_live_weather
+from mcp_liveops.mcp.live_weather import fetch_live_weather
 
 
 def test_fetch_live_weather_parses_current_data() -> None:
@@ -19,7 +19,7 @@ def test_fetch_live_weather_parses_current_data() -> None:
     context.__exit__.return_value = None
 
     with patch(
-        "nexus_shield.mcp.live_weather.urlopen",
+        "mcp_liveops.mcp.live_weather.urlopen",
         return_value=context,
     ):
         result = fetch_live_weather(28.6139, 77.2090)
@@ -30,7 +30,7 @@ def test_fetch_live_weather_parses_current_data() -> None:
 
 def test_fetch_live_weather_failure_is_controlled() -> None:
     with patch(
-        "nexus_shield.mcp.live_weather.urlopen",
+        "mcp_liveops.mcp.live_weather.urlopen",
         side_effect=TimeoutError("timeout"),
     ):
         try:
@@ -39,3 +39,4 @@ def test_fetch_live_weather_failure_is_controlled() -> None:
             assert "Live weather API request failed" in str(exc)
         else:
             raise AssertionError("Expected RuntimeError")
+

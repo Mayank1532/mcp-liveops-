@@ -1,7 +1,7 @@
 [project]
-name = "nexus-shield-agentic-intelligence"
+name = "mcp-liveops"
 version = "0.1.0"
-description = "NEXUS-SHIELD - Self-Validating Live Intelligence Agent"
+description = "MCP-LIVEOPS - MCP-Based Real-Time API Intelligence"
 readme = "README.md"
 requires-python = ">=3.12,<3.13"
 dependencies = [
@@ -27,7 +27,7 @@ build-backend = "uv_build"
 package = true
 
 [tool.uv.build-backend]
-module-name = "nexus_shield"
+module-name = "mcp_liveops"
 module-root = "src"
 
 [tool.pytest.ini_options]

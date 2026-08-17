@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from nexus_shield.mcp import (
+from mcp_liveops.mcp import (
     McpClientAdapter,
     ToolExecutionResult,
     ToolMetadata,
@@ -145,3 +145,4 @@ async def test_mcp_unknown_tool_failure() -> None:
 
     assert result.success is False
     assert result.error is not None
+

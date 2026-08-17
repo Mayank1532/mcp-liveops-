@@ -4,7 +4,7 @@ from uuid import uuid4
 import pytest
 from pydantic import ValidationError
 
-from nexus_shield.evidence import (
+from mcp_liveops.evidence import (
     EvidenceRecord,
     RetrievalMethod,
     SourceType,
@@ -123,3 +123,4 @@ def test_evidence_record_is_immutable() -> None:
 
     with pytest.raises(ValidationError):
         record.claim = 'Changed claim'
+

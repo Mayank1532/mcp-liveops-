@@ -1,4 +1,4 @@
-﻿from nexus_shield.core.health import health_check
+from mcp_liveops.core.health import health_check
 
 
 def test_health_check() -> None:
@@ -6,3 +6,4 @@ def test_health_check() -> None:
 
     assert result["status"] == "ok"
     assert result["project"] == "nexus-shield"
+

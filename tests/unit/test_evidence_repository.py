@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from uuid import uuid4
 
-from nexus_shield.evidence import (
+from mcp_liveops.evidence import (
     EvidenceRecord,
     InMemoryEvidenceRepository,
     RetrievalMethod,
@@ -103,8 +103,9 @@ def test_repository_returns_immutable_tuple() -> None:
 
 
 def test_repository_satisfies_abstraction() -> None:
-    from nexus_shield.evidence import EvidenceRepository
+    from mcp_liveops.evidence import EvidenceRepository
 
     repository = InMemoryEvidenceRepository()
 
     assert isinstance(repository, EvidenceRepository)
+
